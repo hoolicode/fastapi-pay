@@ -3,6 +3,7 @@ from ..settings.settings import API_TOKEN
 
 import logging
 from functools import wraps
+from fastapi import HTTPException, status
 from typing import Coroutine, Tuple, Dict
 from httpx import AsyncClient, Response, ConnectError
 
@@ -18,7 +19,7 @@ def catch_exceptions(coroutine: Coroutine) -> Coroutine:
       response = await coroutine(*args, **kwargs)
     except ConnectError:
       logger.fatal("Can't connect to the server")
-      raise
+      raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, 'The Server is down')
 
     return response
 
@@ -38,3 +39,7 @@ class Session(AsyncClient, metaclass=Singleton):
   @catch_exceptions
   async def post(self, *args: Tuple, **kwargs: Dict) -> Response:
     return await super().post(*args, **kwargs)
+
+  @catch_exceptions
+  async def patch(self, *args: Tuple, **kwargs: Dict) -> Response:
+    return await super().patch(*args, **kwargs)
