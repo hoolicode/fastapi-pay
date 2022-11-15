@@ -15,7 +15,10 @@ async def payment(data = Body()) -> None:
       final_price = data['object']['income_amount']['value']
       await payment_update(payment_id, is_pk=False, **{'paid': True, 'final_price': final_price})
 
+    case 'payment.canceled':
+      await payment_update(payment_id, is_pk=False, **{'cancelled': True})
+
     case _:
-      logger.warning('Unregistered event:', event)
+      logger.error(f'Unregistered event: {event}')
 
   return Response()
