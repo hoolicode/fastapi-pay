@@ -23,6 +23,9 @@ class Data(BaseModel):
 async def checkout(data: Data, sessionid: str = Cookie()) -> Dict:
   response = await server_payment_create(data.price, sessionid)
 
+  if response.status_code == 403:
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
   payment = Payment(**response.json())
   response = await yookassa_payment_create(payment, data.return_url, data.description)
 
