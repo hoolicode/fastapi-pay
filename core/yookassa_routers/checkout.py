@@ -29,7 +29,7 @@ async def checkout(data: Data, sessionid: str = Cookie()) -> Dict:
     logger.error(f"YooKassa can't generate a payment\n{response.json()}")
     raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, 'YooKassa Server is unavailable')
 
-  response = await server_payment_update(payment, payment_id=response.json()['id'])
+  response = await server_payment_update(payment.id, payment_id=response.json()['id'])
   response_json = response.json()
 
   return ORJSONResponse({'return_url': response_json['confirmation_url']})

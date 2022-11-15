@@ -1,12 +1,19 @@
 from .session import Session
-from ..models import Payment
 from ..settings.settings import API_URL
 
-from typing import Dict
+from uuid import UUID
 from httpx import Response
+from typing import Union, Dict
 
-URL = f'{API_URL}/api/payment-update/{{}}/'
+URL_PK = f'{API_URL}/api/payment-update/pk/{{}}/'
+URL_UUID = f'{API_URL}/api/payment-update/uuid/{{}}/'
 
 
-async def payment_update(payment: Payment, **kwargs: Dict) -> Response:
-  return await Session().patch(URL.format(payment.id), json=kwargs)
+async def payment_update(lookup_field: Union[str, UUID], is_pk: bool = True, **kwargs: Dict) -> Response:
+
+  if is_pk:
+    url = URL_PK.format(lookup_field)
+  else:
+    url = URL_UUID.format(lookup_field)
+
+  return await Session().patch(url.format(lookup_field), json=kwargs)
