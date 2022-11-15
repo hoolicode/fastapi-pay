@@ -7,7 +7,7 @@ from ..settings.settings import YOOKASSA_URL
 URL = f'{YOOKASSA_URL}/payments/'
 
 
-async def payment_create(payment: Payment, return_url: str) -> Response:
+async def payment_create(payment: Payment, return_url: str, description: str) -> Response:
   session = Session()
 
   response = await session.post(
@@ -22,7 +22,8 @@ async def payment_create(payment: Payment, return_url: str) -> Response:
         'type': 'redirect',
         'return_url': return_url
       },
-      'capture': True
+      'capture': True,
+      'description': description
     }
   )
 

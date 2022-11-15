@@ -17,13 +17,14 @@ logger = logging.getLogger(__name__)
 class Data(BaseModel):
   price: float
   return_url: AnyUrl
+  description: str
 
 
 async def checkout(data: Data, sessionid: str = Cookie()) -> Dict:
   response = await server_payment_create(data.price, sessionid)
 
   payment = Payment(**response.json())
-  response = await yookassa_payment_create(payment, data.return_url)
+  response = await yookassa_payment_create(payment, data.return_url, data.description)
 
   if response.status_code != 200:
     logger.error(f"YooKassa can't generate a payment\n{response.json()}")
