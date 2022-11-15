@@ -6,8 +6,8 @@ from ..server import payment_update as server_payment_update
 
 import logging
 from typing import Dict
-from httpx import ConnectError
 from pydantic import BaseModel, AnyUrl
+
 from fastapi.responses import ORJSONResponse
 from fastapi import Cookie, HTTPException, status
 
