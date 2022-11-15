@@ -1,18 +1,25 @@
-from .settings import API_URL, API_TOKEN
+from ..server import ping
 
 import sys
 import logging
-from httpx import AsyncClient, ConnectError
+from httpx import ConnectError
 
 logger = logging.getLogger(__name__)
 
 
 async def on_startup() -> None:
-  async with AsyncClient() as session:
 
-    try:
-      request = await session.get(f'{API_URL}/api/ping/', headers={'Authorization': API_TOKEN})
-      assert request.status_code == 200
-    except (ConnectError, AssertionError):
-      logger.fatal("Something's wrong with the server")
-      sys.exit(1)
+  try:
+    response = await ping()
+    assert response.status_code == 200
+
+  except ConnectError:
+    pass
+
+  except AssertionError:
+    logger.fatal("Server Credentials are wrong")
+
+  else:
+    return
+
+  sys.exit(1)
